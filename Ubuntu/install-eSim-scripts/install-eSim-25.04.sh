@@ -83,20 +83,17 @@ function installNghdl
 
 function installSky130Pdk
 {
-
     echo "Installing SKY130 PDK......................"
-
-
     # Remove any previous sky130-fd-pdr instance, if any
     sudo rm -rf /usr/share/local/sky130_fd_pr
     #installing sky130
-    volare enable --pdk sky130 --pdk-root /usr/share/local/ 0fe599b2afb6708d281543108caf8310912f54af
+    sudo $config_dir/env/bin/volare enable --pdk sky130 --pdk-root /usr/share/local/ 0fe599b2afb6708d281543108caf8310912f54af
     # Copy SKY130 library
     echo "Copying SKY130 PDK........................."
 
     sudo mkdir -p /usr/share/local/
-    sudo mv /usr/share/local/volare/sky130/versions/0fe599b2afb6708d281543108caf8310912f54af/sky130A/libs.ref/sky130_fd_pr /usr/share/local/
-    rm -rf /usr/share/local/volare/
+    sudo mv /usr/share/local/volare/sky130/versions/0fe599b2afb6708d281543108caf8310912f54af/sky130B/libs.ref/sky130_fd_pr /usr/share/local/
+    sudo rm -rf /usr/share/local/volare/
 
     # Change ownership from root to the user
     sudo chown -R $USER:$USER /usr/share/local/sky130_fd_pr/
@@ -120,15 +117,15 @@ function installKicad
     # Define KiCad PPAs based on Ubuntu version
     if dpkg --compare-versions "$ubuntu_version" "ge" "25.04"; then
         echo "Ubuntu version 25.04 detected"
-        kicadppa = "kicad/kicad-9.0-releases"
-        kicad_version = "9"
+        kicadppa="kicad/kicad-9.0-releases"
+        kicad_version="9"
     elif dpkg --compare-versions "$ubuntu_version" "ge" "24.04"; then
         echo "Ubuntu 24.04 detected."
         kicadppa="kicad/kicad-8.0-releases"
-        kicad_version = "8"
+        kicad_version="8"
     else
         kicadppa="kicad/kicad-6.0-releases"
-        kicad_version = "6"
+        kicad_version="6"
     fi
     if [[ "$installed_version" != "$kicad_version" ]]; then
             echo "A different version of KiCad ($installed_version) is installed."
@@ -144,7 +141,7 @@ function installKicad
             fi
         else
             echo "KiCad $kicad_version is already installed."
-            exit 0
+            return 0
         fi
 
     # Check if the PPA is already added
@@ -219,6 +216,8 @@ function installDependency
     echo "Installing SandPiper Saas.................."
     pip3 install sandpiper-saas
 
+    echo "Installing Volare.........................."
+    pip install volare
 
     echo "Installing Hdlparse......................"
     pip3 install hdlparse
@@ -228,10 +227,6 @@ function installDependency
 
     echo "Installing PyQt5............."
     pip3 install PyQt5
-
-    echo "Installing volare"
-    sudo apt-get xz-utils
-    pip3 install volare
 }
 
 
